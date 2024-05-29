@@ -22,6 +22,7 @@
       color: white;
       font-size: 24px;
       font-family: 'Montserrat', sans-serif;
+      position: relative;
     }
 
     #map-container {
@@ -87,8 +88,8 @@
 
     #import-export-toggle {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 5px;
+      right: 10px;
       background-color: #4CAF50;
       color: white;
       padding: 10px;
@@ -96,13 +97,18 @@
       cursor: pointer;
       font-size: 20px;
       z-index: 1000;
+      transition: background-color 0.3s;
+    }
+
+    #import-export-toggle:hover {
+      background-color: #FFD700;
     }
 
     #settings-container {
       display: none;
       position: absolute;
-      top: 70px;
-      left: 20px;
+      top: 50px;
+      right: 20px;
       padding: 10px;
       background-color: rgba(255, 255, 255, 0.8);
       border: 2px solid #4CAF50;
@@ -124,24 +130,23 @@
 </head>
 <body>
 
-<div id="header">Thika Student Eco Club - Waste Management Map</div>
+<div id="header">Thika Student Eco Club - Waste Management Map
+  <div id="import-export-toggle" onclick="toggleImportExport()">⚙️</div>
+</div>
 
 <div id="map-container">
   <div id="map"></div>
-  <div id="map-overlay" class="map-overlay">
-    <div id="import-export-toggle" onclick="toggleImportExport()">⚙️</div>
-    <div id="settings-container">
-      <label for="supabase-url">Supabase URL</label>
-      <input type="text" id="supabase-url" placeholder="Enter Supabase URL">
-      <label for="supabase-key">Supabase Key</label>
-      <input type="text" id="supabase-key" placeholder="Enter Supabase Key">
-      <button onclick="saveSupabaseSettings()">Save Settings</button>
-      <label for="import-zip">Import Zip</label>
-      <input type="file" id="import-zip" accept=".zip">
-      <button onclick="exportDataToZip()">Export Zip</button>
-      <div>
-        <a href="https://supabase.io" target="_blank">Get a free Supabase account</a>
-      </div>
+  <div id="settings-container">
+    <label for="supabase-url">Supabase URL</label>
+    <input type="text" id="supabase-url" placeholder="Enter Supabase URL">
+    <label for="supabase-key">Supabase Key</label>
+    <input type="text" id="supabase-key" placeholder="Enter Supabase Key">
+    <button onclick="saveSupabaseSettings()">Save Settings</button>
+    <label for="import-zip">Import Zip</label>
+    <input type="file" id="import-zip" accept=".zip">
+    <button onclick="exportDataToZip()">Export Zip</button>
+    <div>
+      <a href="https://supabase.io" target="_blank">Get a free Supabase account</a>
     </div>
   </div>
   <div id="input-container">
@@ -199,10 +204,12 @@
         img.style.height = '100px';
         popupContent += `<br><img src="${img.src}" style="width: 100px; height: 100px;">`;
         addEditLinkToPopup(layer, popupContent);
+        layer.bindPopup(popupContent).openPopup();
       };
       reader.readAsDataURL(fileInput);
     } else {
       addEditLinkToPopup(layer, popupContent);
+      layer.bindPopup(popupContent).openPopup();
     }
 
     drawnItems.addLayer(layer);
@@ -345,6 +352,7 @@
                   layer = L.marker(layerData.latlngs);
                   if (layerData.popupContent) {
                     addEditLinkToPopup(layer, layerData.popupContent);
+                    layer.bindPopup(layerData.popupContent);
                   }
                 }
                 drawnItems.addLayer(layer);
