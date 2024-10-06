@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12 Chains and Octonion Path Visualization</title>
+    <!-- Include Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Optionally include OrbitControls for camera movement -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.min.js"></script>
+</head>
+<body>
+    <script>
+        // Set up the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Add OrbitControls for easy navigation (optional)
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        // Main spheres for EcoCity, Exotopia, WorldBridger1
+        const sphereGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+
+        // EcoCity Sphere
+        const ecoCityMaterial = new THREE.MeshBasicMaterial({ color: 0x008000 });
+        const ecoCitySphere = new THREE.Mesh(sphereGeometry, ecoCityMaterial);
+        ecoCitySphere.position.set(-5, 0, 0); // EcoCity position
+        scene.add(ecoCitySphere);
+
+        // Exotopia Sphere
+        const exotopiaMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+        const exotopiaSphere = new THREE.Mesh(sphereGeometry, exotopiaMaterial);
+        exotopiaSphere.position.set(5, 0, 0); // Exotopia position
+        scene.add(exotopiaSphere);
+
+        // WorldBridger1 Sphere
+        const worldBridgerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const worldBridgerSphere = new THREE.Mesh(sphereGeometry, worldBridgerMaterial);
+        worldBridgerSphere.position.set(0, 5, 0); // WorldBridger1 position
+        scene.add(worldBridgerSphere);
+
+        // Placeholder for the 12 chains (smaller spheres connected to the main systems)
+        const chainGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+        const chains = []; // array to hold the chain spheres
+
+        for (let i = 0; i < 12; i++) {
+            const chainMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 }); // yellow chains
+            const chainSphere = new THREE.Mesh(chainGeometry, chainMaterial);
+
+            // Position chains in a circular pattern around the main spheres
+            const angle = (i / 12) * Math.PI * 2; // Distribute around a circle
+            chainSphere.position.set(Math.cos(angle) * 4, Math.sin(angle) * 4, Math.random() * 2);
+            scene.add(chainSphere);
+            chains.push(chainSphere);
+        }
+
+        // Add octonion-inspired quaternion rotations for dynamic relationships
+        let rotationQuaternion = new THREE.Quaternion();
+        rotationQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 4); // Example rotation
+
+        // Apply quaternion rotations to the chains
+        chains.forEach(chain => {
+            chain.applyQuaternion(rotationQuaternion);
+        });
+
+        // Set the camera position
+        camera.position.z = 10;
+
+        // Animation loop to render the scene and dynamically update the chains and spheres
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate the main project spheres to simulate multidimensional influences
+            ecoCitySphere.rotation.y += 0.01;
+            exotopiaSphere.rotation.y += 0.01;
+            worldBridgerSphere.rotation.y += 0.01;
+
+            // Apply a subtle rotation to each of the chains
+            chains.forEach((chain, index) => {
+                chain.rotation.y += 0.01 * (index + 1);
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate(); // Start the animation loop
+    </script>
+</body>
+</html>
